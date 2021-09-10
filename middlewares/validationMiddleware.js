@@ -15,7 +15,7 @@ const validateQuantity = (quantity) => {
     return {
       err: {
         code: 'invalid_data',
-        message: '"quantity" must be larger then or equal to 1',
+        message: '"quantity" must be larger than or equal to 1',
       },
     };
   }
