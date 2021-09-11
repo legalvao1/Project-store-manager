@@ -2,7 +2,7 @@ const { MongoClient } = require('mongodb');
 require('dotenv').config();
 
 const { MONGO_DB_URL } = process.env || 'mongodb://127.0.0.1:27017';
-const { DB_NAME } = process.env || 'StoreManager';
+const DB_NAME = 'StoreManager';
 
 let schema = null;
 
