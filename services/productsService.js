@@ -49,7 +49,19 @@ const addProduct = async (name, quantity) => {
   return add;
 };
 
+const updateProduct = async (id, name, quantity) => {
+  const productExist = await findProductById(id);
+  if (productExist.err) return productExist;
+  if (validateName(name).err) return validateName(name);
+  if (validateQuantity(quantity).err) return validateQuantity(quantity);
+  if (quantityIsNumeric(quantity).err) return quantityIsNumeric(name);
+ 
+  const update = await productsModel.update(id, name, quantity);
+  return update;
+};
+
 module.exports = {
   addProduct,
   findProductById,
+  updateProduct,
 };
