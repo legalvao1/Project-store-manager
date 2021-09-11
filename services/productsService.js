@@ -60,8 +60,18 @@ const updateProduct = async (id, name, quantity) => {
   return update;
 };
 
+const deleteProduct = async (id) => {
+  const productExist = await findProductById(id);
+
+  if (productExist.err) return productExist;
+
+  const exclude = await productsModel.exclude(id);
+  if (exclude.result.ok) return productExist;
+};
+
 module.exports = {
   addProduct,
   findProductById,
   updateProduct,
+  deleteProduct,
 };
