@@ -6,6 +6,20 @@ const {
   quantityIsNumeric,
 } = require('../middlewares/validationMiddleware');
 
+const findProductById = async (id) => {
+  const product = await productsModel.findProductById(id);
+
+  if (!product) {
+    return {
+      err: {
+        code: 'invalid_data',
+        message: 'Wrong id format',
+      },
+    };
+  }
+  return product;
+};
+
 const productExists = async (name) => {
   const exists = await productsModel.findProductByName(name);
 
@@ -37,4 +51,5 @@ const addProduct = async (name, quantity) => {
 
 module.exports = {
   addProduct,
+  findProductById,
 };
