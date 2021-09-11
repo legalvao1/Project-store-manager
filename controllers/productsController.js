@@ -32,7 +32,7 @@ const updateProduct = async (req, res) => {
 
   if (update.err) return res.status(422).json(update);
 
-  res.status(201).json(update);
+  res.status(200).json(update);
 };
 
 module.exports = {
