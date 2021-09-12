@@ -11,6 +11,14 @@ const validateName = (name) => {
 };
 
 const validateQuantity = (quantity) => {
+  if (typeof quantity !== 'number') {
+    return {
+      err: {
+        code: 'invalid_data',
+        message: '"quantity" must be a number',
+      },
+    };
+  }
   if (!quantity || quantity <= 0) {
     return {
       err: {
@@ -22,20 +30,8 @@ const validateQuantity = (quantity) => {
   return true;
 };
 
-const quantityIsNumeric = (quantity) => {
-  if (typeof quantity !== 'number') {
-    return {
-      err: {
-        code: 'invalid_data',
-        message: '"quantity" must be a number',
-      },
-    };
-  }
-  return true;
-};
-
 module.exports = {
   validateName,
   validateQuantity,
-  quantityIsNumeric,
+  // quantityIsNumeric,
 };
