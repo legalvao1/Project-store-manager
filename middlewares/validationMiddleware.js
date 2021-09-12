@@ -1,3 +1,5 @@
+const productsModel = require('../models/productsModel');
+
 const validateName = (name) => {
   if (!name || name.length < 5) {
     return { 
@@ -30,8 +32,22 @@ const validateQuantity = (quantity) => {
   return true;
 };
 
+const validateProductExists = async (name) => {
+  const exists = await productsModel.findProductByName(name);
+
+  if (exists) {
+    return {
+      err: {
+        code: 'invalid_data',
+        message: 'Product already exists',
+      },
+    };
+  }
+  return false;
+};
+
 module.exports = {
   validateName,
   validateQuantity,
-  // quantityIsNumeric,
+  validateProductExists,
 };

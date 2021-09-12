@@ -3,6 +3,7 @@ const productsModel = require('../models/productsModel');
 const {
   validateName,
   validateQuantity,
+  validateProductExists,
 } = require('../middlewares/validationMiddleware');
 
 const findProductById = async (id) => {
@@ -17,20 +18,6 @@ const findProductById = async (id) => {
     };
   }
   return product;
-};
-
-const validateProductExists = async (name) => {
-  const exists = await productsModel.findProductByName(name);
-
-  if (exists) {
-    return {
-      err: {
-        code: 'invalid_data',
-        message: 'Product already exists',
-      },
-    };
-  }
-  return false;
 };
 
 const addProduct = async (name, quantity) => {
@@ -58,7 +45,6 @@ const updateProduct = async (id, name, quantity) => {
 
 const deleteProduct = async (id) => {
   const productExist = await findProductById(id);
-
   if (productExist.err) return productExist;
 
   const exclude = await productsModel.exclude(id);
