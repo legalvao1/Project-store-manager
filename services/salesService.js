@@ -47,7 +47,24 @@ const getSaleById = async (id) => {
   return sale;
 };
 
+const updateSale = async (id, salesData) => {
+  // console.log(salesData);
+  const saleExist = await getSaleById(id);
+  if (saleExist.err) return saleExist;
+
+  const validateItems = await validateSale(salesData);
+  const result = validateItems.find((item) => {
+    if (!item) return item;
+    return true;
+  });
+  if (result.err) return result;
+
+  const update = await salesModel.update(id, salesData);
+  return update;
+};
+
 module.exports = {
   addSale,
   getSaleById,
+  updateSale,
 };
