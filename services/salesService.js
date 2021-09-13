@@ -5,6 +5,18 @@ const {
   validateQuantity,
 } = require('../middlewares/validationMiddleware');
 
+const validateInventory = (stockQuantity, saleQuantity) => {
+  if (stockQuantity < saleQuantity) {
+    return {
+      err: {
+        code: 'stock_problem',
+        message: 'Such amount is not permitted to sell',
+      },
+    };
+  }
+  return true;
+};
+
 const validateSale = async (saleData) => 
   Promise.all(saleData.map(async ({ productId, quantity }) => {
     const productIsValid = await productsService.findProductById(productId);
@@ -17,6 +29,8 @@ const validateSale = async (saleData) =>
         },
       };
     }
+    const stockAvailable = validateInventory(productIsValid.quantity, quantity);
+    if (stockAvailable.err) return stockAvailable;
     return productIsValid;
 }));
 
