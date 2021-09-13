@@ -63,8 +63,24 @@ const updateSale = async (id, salesData) => {
   return update;
 };
 
+const deleteSale = async (id) => {
+  const saleExist = await getSaleById(id);
+  if (saleExist.err) {
+    return {
+      err: {
+        code: 'invalid_data',
+        message: 'Wrong sale ID format',
+      },
+    };
+  }
+
+  const exclude = await salesModel.exclude(id);
+  if (exclude.result.ok) return saleExist;
+};
+
 module.exports = {
   addSale,
   getSaleById,
   updateSale,
+  deleteSale,
 };
