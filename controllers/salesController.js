@@ -17,7 +17,10 @@ const getSaleById = async (req, res) => {
 const addSale = async (req, res) => {
   const sale = await salesService.addSale(req.body);
 
-  if (sale.err) return res.status(422).json(sale);
+  if (sale.err) {
+    if (sale.err.code === 'invalid_data') return res.status(422).json(sale);
+    return res.status(404).json(sale); 
+  }
 
   res.status(200).json(sale);
 };
