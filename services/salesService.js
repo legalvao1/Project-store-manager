@@ -33,6 +33,21 @@ const addSale = async (saleData) => {
   return sale;
 };
 
+const getSaleById = async (id) => {
+  const sale = await salesModel.getSaleById(id);
+
+  if (!sale) {
+    return {
+      err: {
+        code: 'not_found',
+        message: 'Sale not found',
+      },
+    };
+  }
+  return sale;
+};
+
 module.exports = {
   addSale,
+  getSaleById,
 };
