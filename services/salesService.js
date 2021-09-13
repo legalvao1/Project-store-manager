@@ -17,19 +17,36 @@ const validateSale = async (saleData) =>
         },
       };
     }
-    return true;
+    return productIsValid;
 }));
+
+const decreaseInventory = (saleProducts) => {
+  saleProducts.forEach(async ({ productId, quantity }) => {
+    const product = await productsService.findProductById(productId);
+    const newQuantity = product.quantity - quantity;
+    await productsService.updateProduct(productId, product.name, newQuantity);
+  });
+};
+
+const increaseInventory = (saleProducts) => {
+  saleProducts.forEach(async ({ productId, quantity }) => {
+    const product = await productsService.findProductById(productId);
+    const newQuantity = product.quantity + quantity;
+    await productsService.updateProduct(productId, product.name, newQuantity);
+  });
+};
 
 const addSale = async (saleData) => {
   const validateItems = await validateSale(saleData);
-
-  const result = validateItems.find((item) => {
+   const result = validateItems.find((item) => {
     if (!item) return item;
-    return true;
+    return true; 
   });
 
   if (result.err) return result;
   const sale = salesModel.create(saleData);
+  decreaseInventory(saleData);
+
   return sale;
 };
 
@@ -48,7 +65,6 @@ const getSaleById = async (id) => {
 };
 
 const updateSale = async (id, salesData) => {
-  // console.log(salesData);
   const saleExist = await getSaleById(id);
   if (saleExist.err) return saleExist;
 
@@ -74,7 +90,11 @@ const deleteSale = async (id) => {
     };
   }
 
+  const saleProducts = saleExist.itensSold;
+  await increaseInventory(saleProducts);
+  
   const exclude = await salesModel.exclude(id);
+
   if (exclude.result.ok) return saleExist;
 };
 
