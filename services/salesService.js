@@ -117,4 +117,6 @@ module.exports = {
   getSaleById,
   updateSale,
   deleteSale,
+  validateSale,
+  validateInventory,
 };

@@ -35,11 +35,12 @@ const findProductByName = async (name) => {
 
 const addProduct = async (name, quantity) => {
   const isValidName = validateName(name);
-  const isvalidQuantity = validateQuantity(quantity);
-  const productExist = await findProductByName(name);
-
   if (isValidName.err) return isValidName;
+
+  const isvalidQuantity = validateQuantity(quantity);
   if (isvalidQuantity.err) return isvalidQuantity;
+
+  const productExist = await findProductByName(name);
   if (productExist.err) return productExist;
 
   const add = await productsModel.create(name, quantity);
@@ -68,6 +69,7 @@ const deleteProduct = async (id) => {
 module.exports = {
   addProduct,
   findProductById,
+  findProductByName,
   updateProduct,
   deleteProduct,
 };
