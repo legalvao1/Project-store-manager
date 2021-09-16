@@ -34,7 +34,6 @@ describe('testa arquivo connection', () => {
   });
 });
 
-
 describe('Busca todos os Produtos no BD', () => {
   const DBServer = new MongoMemoryServer();
   let connectionMock;
@@ -201,7 +200,7 @@ describe('Busca apenas um produto no BD através do ID', () => {
     after(async () => {
       const db = await mongoConnection.getConnection();
       await db.collection('products').drop();
-  });
+    });
 
     it('retorna um objeto', async () => {
       const response = await productsModel.findProductById(ID_EXAMPLE);
@@ -213,6 +212,32 @@ describe('Busca apenas um produto no BD através do ID', () => {
       const response = await await productsModel.findProductById(ID_EXAMPLE);
 
       expect(response).to.include.all.keys('_id', 'name', 'quantity');
+    });
+  });
+
+  describe('quando ObjectId é inválido', () => {
+    const invalidId = '604cb554311d68f491ba578'
+
+    const expectedProduct = {
+      _id: '604cb554311d68f491ba5781',
+      name: 'example',
+      quantity: 20,
+    }
+
+    before(async () => {
+      const db = await mongoConnection.getConnection();
+      await db.collection('products').insertOne({ ... expectedProduct });
+    });
+
+    after(async () => {
+      const db = await mongoConnection.getConnection();
+      await db.collection('products').drop();
+    });
+
+    it('retorna false', async () => {
+      const response = await productsModel.findProductById(invalidId);
+
+      expect(response).to.be.false
     });
   });
 });
@@ -324,6 +349,32 @@ describe('Atualiza apenas um produto no BD através do id', () => {
       expect(response).to.be.deep.equal(expected_response);
     });
   });
+
+  describe('quando ObjectId é inválido', () => {
+    const invalidId = '604cb554311d68f491ba578'
+
+    const product = {
+      _id: '604cb554311d68f491ba5781',
+      name: 'example',
+      quantity: 20,
+    }
+
+    before(async () => {
+      const db = await mongoConnection.getConnection();
+      await db.collection('products').insertOne({ ... product });
+    });
+
+    after(async () => {
+      const db = await mongoConnection.getConnection();
+      await db.collection('products').drop();
+    });
+
+    it('retorna false', async () => {
+      const response = await productsModel.update(invalidId, product.name, product.quantity);
+
+      expect(response).to.be.false
+    });
+  });
 });
 
 describe('Deleta apenas um produto no BD através do id', () => {
@@ -370,6 +421,32 @@ describe('Deleta apenas um produto no BD através do id', () => {
       const response = await productsModel.exclude('604cb554311d68f491ba5781');
  
       expect(response.result.ok).to.be.deep.equal(1);
+    });
+  });
+
+  describe('quando ObjectId é inválido', () => {
+    const invalidId = '604cb554311d68f491ba578'
+
+    const product = {
+      _id: '604cb554311d68f491ba5781',
+      name: 'example',
+      quantity: 20,
+    }
+
+    before(async () => {
+      const db = await mongoConnection.getConnection();
+      await db.collection('products').insertOne({ ... product });
+    });
+
+    after(async () => {
+      const db = await mongoConnection.getConnection();
+      await db.collection('products').drop();
+    });
+
+    it('retorna false', async () => {
+      const response = await productsModel.exclude(invalidId);
+
+      expect(response).to.be.false
     });
   });
 });
@@ -527,14 +604,13 @@ describe('Busca apenas uma venda no BD através do ID', () => {
 
   describe('quando existe uma venda para o ID informado', () => {
     const sale_example = {
-        _id: ObjectId('6140f7fe58c7fb340503bc6d'),
-        itensSold: [
-          { productId: '604cb554311d68f491ba5781', quantity: 10 },
-          { productId: '604cb554311d68f491ba5782', quantity: 5 }
-        ]
-      }
+      _id: ObjectId('6140f7fe58c7fb340503bc6d'),
+      itensSold: [
+        { productId: '604cb554311d68f491ba5781', quantity: 10 },
+        { productId: '604cb554311d68f491ba5782', quantity: 5 }
+      ]
+    }
     
-
     before(async () => {
       const db = await mongoConnection.getConnection();
       await db.collection('sales').insertOne({ ...sale_example });
@@ -556,7 +632,35 @@ describe('Busca apenas uma venda no BD através do ID', () => {
  
       expect(response).to.deep.equal(sale_example);
   });
-});
+  });
+
+  describe('quando ObjectId é inválido', () => {
+    const invalidId = '6140f7fe58c7fb340503bc'
+
+    const sale_example = {
+      _id: ObjectId('6140f7fe58c7fb340503bc6d'),
+      itensSold: [
+        { productId: '604cb554311d68f491ba5781', quantity: 10 },
+        { productId: '604cb554311d68f491ba5782', quantity: 5 }
+      ]
+    }
+
+    before(async () => {
+      const db = await mongoConnection.getConnection();
+      await db.collection('sales').insertOne({ ... sale_example });
+    });
+
+    after(async () => {
+      const db = await mongoConnection.getConnection();
+      await db.collection('sales').drop();
+    });
+
+    it('retorna false', async () => {
+      const response = await salesModel.getSaleById(invalidId);
+
+      expect(response).to.be.false
+    });
+  });
 });
 
 describe('Atualiza apenas uma venda no BD através do id', () => {
@@ -617,6 +721,34 @@ describe('Atualiza apenas uma venda no BD através do id', () => {
       expect(response).to.be.deep.equal(expected_response);
     });
   });
+
+  describe('quando ObjectId é inválido', () => {
+    const invalidId = '6140f7fe58c7fb340503bc'
+
+    const sale_example = {
+      _id: ObjectId('6140f7fe58c7fb340503bc6d'),
+      itensSold: [
+        { productId: '604cb554311d68f491ba5781', quantity: 10 },
+        { productId: '604cb554311d68f491ba5782', quantity: 5 }
+      ]
+    }
+
+    before(async () => {
+      const db = await mongoConnection.getConnection();
+      await db.collection('sales').insertOne({ ... sale_example });
+    });
+
+    after(async () => {
+      const db = await mongoConnection.getConnection();
+      await db.collection('sales').drop();
+    });
+
+    it('retorna false', async () => {
+      const response = await salesModel.update(invalidId, sale_example.itensSold);
+
+      expect(response).to.be.false
+    });
+  });
 });
 
 describe('Deleta uma venda no BD através do id', () => {
@@ -663,6 +795,34 @@ describe('Deleta uma venda no BD através do id', () => {
       const response = await salesModel.exclude('6140f7fe58c7fb340503bc6d');
  
       expect(response.result.ok).to.be.deep.equal(1);
+    });
+  });
+
+  describe('quando ObjectId é inválido', () => {
+    const invalidId = '6140f7fe58c7fb340503bc'
+
+    const sale_example = {
+      _id: ObjectId('6140f7fe58c7fb340503bc6d'),
+      itensSold: [
+        { productId: '604cb554311d68f491ba5781', quantity: 10 },
+        { productId: '604cb554311d68f491ba5782', quantity: 5 }
+      ]
+    }
+
+    before(async () => {
+      const db = await mongoConnection.getConnection();
+      await db.collection('sales').insertOne({ ... sale_example });
+    });
+
+    after(async () => {
+      const db = await mongoConnection.getConnection();
+      await db.collection('sales').drop();
+    });
+
+    it('retorna false', async () => {
+      const response = await salesModel.exclude(invalidId);
+
+      expect(response).to.be.false
     });
   });
 });
