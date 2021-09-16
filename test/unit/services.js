@@ -220,6 +220,133 @@ describe('SERVICE - Atualiza um produto pelo ID', () => {
       expect(response).to.deep.equal(expected_response);
     });
   });
+
+  describe('quando não encontra o produto', () => {
+
+    const product = {
+      _id: '604cb554311d68f491ba5781',
+      name: 'example', 
+      quantity: 20 
+    }
+
+    before(() => {
+      sinon.stub(productsModel, 'findProductById').resolves({
+        err: {
+          code: 'invalid_data',
+          message: 'Wrong id format',
+        },
+      });
+    });
+
+    after(() => {
+      productsModel.findProductById.restore();
+    });
+
+    it('retorna um object', async () => {
+      const response = await productsService.updateProduct(product._id, product.name, product.quantity);
+
+      expect(response).to.be.an('object');
+    });
+
+    it('tais itens possui as propriedades: "err"', async () => {
+      const expected_response = {
+        err: {
+          code: 'invalid_data',
+          message: 'Wrong id format',
+        },
+      };;
+
+      const response = await productsService.updateProduct(product._id, product.name, product.quantity);
+
+      expect(response).to.deep.equal(expected_response);
+    });
+  });
+
+  describe('quando nome é invalido', () => {
+
+    const product = {
+      _id: '604cb554311d68f491ba5781',
+      name: 'exa', 
+      quantity: 20 
+    }
+
+    before(() => {
+      sinon.stub(productsModel, 'findProductById').resolves(product);
+      sinon.stub(productsModel, 'update').resolves({
+        err: {
+          code: 'invalid_data',
+          message: '"name" length must be at least 5 characters long',
+        },
+      });
+    });
+
+    after(() => {
+      productsModel.findProductById.restore();
+      productsModel.update.restore();
+    });
+
+    it('retorna um object', async () => {
+      const response = await productsService.updateProduct(product._id, product.name, product.quantity);
+
+      expect(response).to.be.an('object');
+    });
+
+    it('tais itens possui as propriedades: "err"', async () => {
+      const expected_response = {
+        err: {
+          code: 'invalid_data',
+          message: '"name" length must be at least 5 characters long',
+        },
+      };;
+
+      const response = await productsService.updateProduct(product._id, product.name, product.quantity);
+
+      expect(response).to.deep.equal(expected_response);
+    });
+  });
+
+  describe('quando quantidade é invalida', () => {
+
+    const product = {
+      _id: '604cb554311d68f491ba5781',
+      name: 'example', 
+      quantity: -20 
+    }
+
+    before(() => {
+      sinon.stub(productsModel, 'findProductById').resolves(product);
+      sinon.stub(productsModel, 'update').resolves({
+        err: {
+          code: 'invalid_data',
+          message: '"quantity" must be larger than or equal to 1',
+        },
+      });
+    });
+
+    after(() => {
+      productsModel.findProductById.restore();
+      productsModel.update.restore();
+    });
+
+    it('retorna um object', async () => {
+      const response = await productsService.updateProduct(product._id, product.name, product.quantity);
+
+      expect(response).to.be.an('object');
+    });
+
+    it('tais itens possui as propriedades: "err"', async () => {
+      const expected_response = {
+        err: {
+          code: 'invalid_data',
+          message: '"quantity" must be larger than or equal to 1',
+        },
+      };;
+
+      const response = await productsService.updateProduct(product._id, product.name, product.quantity);
+
+      expect(response).to.deep.equal(expected_response);
+    });
+  });
 });
 
 describe('SERVICE - Deleta um produto pelo ID', () => {
@@ -233,11 +360,7 @@ describe('SERVICE - Deleta um produto pelo ID', () => {
     }
 
     before(() => {
-      sinon.stub(productsModel, 'findProductById').resolves({
-        _id: '604cb554311d68f491ba5781',
-        name: 'example',
-        quantity: 20
-      });
+      sinon.stub(productsModel, 'findProductById').resolves(product);
        sinon.stub(productsModel, 'exclude').resolves({ result: { ok: 1 } });
     });
 
@@ -247,11 +370,12 @@ describe('SERVICE - Deleta um produto pelo ID', () => {
 
     it('retorna um object', async () => {
       const response = await productsService.deleteProduct(product._id);
+      console.log(response);
 
       expect(response).to.be.a('object');
     });
 
-    it('tais itens possui as propriedades: "id", "name", quantity', async () => {
+    it('tais itens possui as propriedades: "_id", "name", quantity', async () => {
       const expected_response = product;
 
       const response = await productsService.deleteProduct(product._id);
@@ -259,6 +383,7 @@ describe('SERVICE - Deleta um produto pelo ID', () => {
       expect(response).to.deep.equal(expected_response);
     });
   });
+  
 });
 /////////////////////////////////////////////////
 //sales
@@ -483,6 +608,75 @@ describe('SERVICE - Atualiza uma venda no BD', () => {
       const response = await salesService.updateSale(id_example, update_data);
 
       expect(response).to.deep.equal(response_sale_update);
+    });
+  });
+
+  describe('Quando a não venda a ser atualizada não é encontrada', () => {
+
+    before(() => {
+      sinon.stub(salesModel, 'getSaleById').resolves({
+        err: {
+          code: 'not_found',
+          message: 'Sale not found',
+        },
+      });
+    });
+
+    after(() => {
+      salesModel.getSaleById.restore();
+    });
+
+    it('retorna um object', async () => {
+      const response = await salesService.updateSale(id_example,update_data);
+
+      expect(response).to.be.a('object');
+    });
+
+    it('O objeto contém as chaves "err", ', async () => {
+      const response = await salesService.updateSale(id_example, update_data);
+
+      expect(response).to.deep.equal({
+        err: {
+          code: 'not_found',
+          message: 'Sale not found',
+        },
+      });
+    });
+  });
+
+  describe('Quando a não venda a ser atualizada não tem itens válidos', () => {
+
+    const response_sale_update = {
+      _id: '6140f7fe58c7fb340503bc6d',
+      itensSold: [
+        { productId: '604cb554311d68f491ba57', quantity: '20' },
+        { productId: '604cb554311d68f491ba5782', quantity: 15 }
+      ]
+    }
+
+    before(() => {
+      sinon.stub(salesModel, 'getSaleById').resolves(response_sale_update);
+    });
+
+    after(() => {
+      salesModel.getSaleById.restore();
+    });
+
+    it('retorna um object', async () => {
+      const response = await salesService.updateSale(response_sale_update.id,response_sale_update.itensSold);
+
+      expect(response).to.be.a('object');
+    });
+
+    it('O objeto contém as chaves "err", ', async () => {
+      const response = await salesService.updateSale(response_sale_update.id,response_sale_update.itensSold);
+
+      expect(response).to.deep.equal({
+        err: {
+          code: 'invalid_data',
+          message: 'Wrong product ID or invalid quantity',
+        },
+      });
     });
   });
 });
