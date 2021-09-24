@@ -388,8 +388,8 @@ Para iniciar o desenvolvimento, é necessário clonar o repositório do GitHub, 
 ```shell
 cd "diretorio de sua preferencia"
 
-git clone git@github.com:legalvao1/Project-TrybeWallet.git
+git clone git@github.com:legalvao1/Project-store-manager.git
 
-cd Project-TrybeWallet
+cd Project-store-manager
 
 npm install
