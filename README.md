@@ -8,7 +8,7 @@ Neste projeto o objetivo era desenvolver nossa primeira API, que se tratava de u
 
 # Habilidades
 
-As habilidades requeridas eram:
+As habilidades a serem desenvolvidas:
 
 - Entender o funcionamento da camada de Model;
 - Delegar responsabilidades específicas para essa camada;
@@ -384,4 +384,12 @@ O retorno de uma venda cadastrada com sucesso deverá ser:
 - Será validado que cobertura total das linhas dos arquivos na pasta `controllers` é maior ou igual a 80%
 
 ---
+Para iniciar o desenvolvimento, é necessário clonar o repositório do GitHub, acessar o projeto Store Manager e intalar as dependências:
+```shell
+cd "diretorio de sua preferencia"
 
+git clone git@github.com:legalvao1/Project-TrybeWallet.git
+
+cd Project-TrybeWallet
+
+npm install
